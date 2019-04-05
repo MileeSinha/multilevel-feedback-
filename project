@@ -1,0 +1,127 @@
+#include <iostream>
+#include <bits/stdc++.h>
+#include <vector>
+
+using namespace std;
+
+struct ProcessData
+{
+	int Num;
+	int Pid;  //Process Id
+	int Arrival_time; //Process Arrival Time
+	int Burst_time; //Process Bruest Time
+	int Priority; //Process Priority
+	int Finish_time; //Process Finish Time
+	int Time_to_Finsh; //Process Remaining  Time During Execution
+	int Waiting_Time; //Waiting Time
+	int Start_Time; //Process start Time
+	int Response_Time;
+
+};
+struct ProcessData currentProcess;
+
+
+class ProcessInfo
+{
+public:
+
+	vector< ProcessData > input;
+	vector<ProcessData> input_copy;
+	int numberOfProcesses;
+	int total_exection_time;
+	int* Ghant;
+public:
+	ProcessInfo();
+	~ProcessInfo();
+	void takeInput();
+	int FindTotalExecutionTime(ProcessInfo&);
+	static bool SortOnID(const ProcessData& x , const ProcessData& y);
+	static bool SortOnArrivalTime( const ProcessData& x ,const ProcessData& y);
+	static bool Numsort( const ProcessData& x ,const ProcessData& y);
+	void StartScheduling(ProcessInfo&);
+	void DisplayResult(ProcessInfo&);
+
+};
+
+struct comPare
+{
+	bool operator()(const ProcessData& x ,const ProcessData& y)
+	{
+		if( x.Priority > y.Priority )
+			return true;
+		else if( x.Priority < y.Priority )
+			return false;
+		if( x.Pid > y.Pid )
+			return true;
+
+		return false;
+		
+	}
+	
+};
+
+ProcessInfo::ProcessInfo() // Constructor
+{
+	numberOfProcesses = 0;
+	total_exection_time = 0;
+	Ghant = NULL;
+}
+
+ProcessInfo::~ProcessInfo()
+{
+	numberOfProcesses = 0;
+	total_exection_time = 0;
+	delete [] Ghant;
+}
+
+void ProcessInfo::takeInput()
+{
+	ProcessData temp;
+	
+	int Arrival_time;
+	int Burst_time;
+	int Pid;
+	int Priority;
+	
+	for( int i= 0; i<numberOfProcesses; i++ )
+	{
+		cout<<"\t\t$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n";
+		cout<<"\t\t\tENTER DETAILS OF PROCESS "<<i<<"\n";
+		cout<<" Enter pid of process "<<i<<"\n";
+		cin>>Pid;
+		cout<<"Enter arrival time of process "<<i<<"\n";
+		cin>>Arrival_time;
+		cout<<"Enter burst of process "<<i<<"\n";
+		cin>>Burst_time;
+		cout<<"Enter priority of process "<<i<<"\n";
+		cin>>Priority;
+		temp.Num = i+1;
+		temp.Arrival_time = Arrival_time;
+		temp.Burst_time = Burst_time;
+		temp.Time_to_Finsh = Burst_time;
+		temp.Pid = Pid;
+		temp.Priority = Priority;
+		this->input.push_back(temp);//used for inserting into array
+	}
+	this->input_copy = this->input;
+}
+
+int ProcessInfo::FindTotalExecutionTime(ProcessInfo& myProcess)
+{
+	int t = 0;
+	t = t + myProcess.input[0].Arrival_time;
+    for( int i= 0 ;i<numberOfProcesses; i++ )
+    {
+    	if( t >= myProcess.input[i].Arrival_time )
+    	{
+    		t += myProcess.input[i].Burst_time;
+    	}
+    	else
+    	{
+    		int diff = (myProcess.input[i].Arrival_time - t);
+    		t += diff + myProcess.input[i].Burst_time;
+
+    	}
+    }
+    return t;
+}
